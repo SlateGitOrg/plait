@@ -1,0 +1,16 @@
+provider "fakecloud" { endpoint = "http://fakecloud.invalid" }
+
+resource "fakecloud_network" "main" {
+  name = "app-net"
+  cidr = "10.2.0.0/16"
+  lifecycle { create_before_destroy = true }
+}
+
+resource "fakecloud_instance" "web" {
+  name       = "app-web"
+  network_id = fakecloud_network.main.id
+  tags       = { env = "dev" }
+  lifecycle { create_before_destroy = true }
+}
+
+output "web_size" { value = fakecloud_instance.web.size }

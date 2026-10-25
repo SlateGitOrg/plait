@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "lineage": "00000000000000000000000000000002",
+  "serial": 7,
+  "outputs": { "legacy": "x" },
+  "resources": [
+    {
+      "address": "fakecloud_bucket.data[0]", "type": "fakecloud_bucket", "name": "data", "index_key": 0, "provider": "fakecloud",
+      "current": { "status": "ready", "attributes": { "id": "bkt-0001", "name": "data-0", "versioning": false, "arn": "fc:bucket:data-0" } }
+    },
+    {
+      "address": "fakecloud_bucket.data[1]", "type": "fakecloud_bucket", "name": "data", "index_key": 1, "provider": "fakecloud",
+      "current": { "status": "ready", "attributes": { "id": "bkt-0002", "name": "data-1", "versioning": false, "arn": "fc:bucket:data-1" } }
+    },
+    {
+      "address": "fakecloud_bucket.old", "type": "fakecloud_bucket", "name": "old", "provider": "fakecloud",
+      "current": { "status": "ready", "attributes": { "id": "bkt-0003", "name": "old", "versioning": true, "arn": "fc:bucket:old" } }
+    }
+  ]
+}

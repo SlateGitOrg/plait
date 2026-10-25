@@ -1,0 +1,24 @@
+plait will perform the following actions:
+
+  # fakecloud_bucket.assets must be replaced because it is tainted
+-/+ resource "fakecloud_bucket" "assets" {
+      ~ arn = "fc:bucket:assets" -> (known after apply)
+      ~ id  = "bkt-0009" -> (known after apply)
+        # (2 unchanged attributes hidden)
+    }
+
+  # fakecloud_network.main (deposed object) will be destroyed
+  - resource "fakecloud_network" "main" {
+      - cidr = "10.9.0.0/16" -> null
+      - id   = "net-0001" -> null
+      - name = "app-net" -> null
+    }
+
+Plan: 1 to add, 0 to change, 2 to destroy.
+
+--- apply steps ---
+fakecloud_bucket.assets (create)
+fakecloud_bucket.assets (destroy)
+fakecloud_network.main (destroy deposed)
+--- ordering (step: runs after) ---
+fakecloud_bucket.assets (create): fakecloud_bucket.assets (destroy)

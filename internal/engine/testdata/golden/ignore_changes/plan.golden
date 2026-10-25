@@ -1,0 +1,13 @@
+plait will perform the following actions:
+
+  # fakecloud_instance.web will be updated in-place
+  ~ resource "fakecloud_instance" "web" {
+      ~ name = "app-web" -> "app-web-renamed"
+        # (6 unchanged attributes hidden)
+    }
+
+Plan: 0 to add, 1 to change, 0 to destroy.
+
+--- apply steps ---
+fakecloud_instance.web (update)
+--- ordering (step: runs after) ---

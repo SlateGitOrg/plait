@@ -1,0 +1,73 @@
+plait will perform the following actions:
+
+  # fakecloud_bucket.data["logs"] will be created
+  + resource "fakecloud_bucket" "data" {
+      + arn        = (known after apply)
+      + id         = (known after apply)
+      + name       = "golden-logs"
+      + versioning = false
+    }
+
+  # fakecloud_bucket.data["media"] will be created
+  + resource "fakecloud_bucket" "data" {
+      + arn        = (known after apply)
+      + id         = (known after apply)
+      + name       = "golden-media"
+      + versioning = true
+    }
+
+  # fakecloud_instance.web[0] will be created
+  + resource "fakecloud_instance" "web" {
+      + id         = (known after apply)
+      + name       = "golden-web-a"
+      + network_id = (known after apply)
+      + private_ip = (known after apply)
+      + size       = "small"
+      + status     = "running"
+      + tags       = {}
+    }
+
+  # fakecloud_instance.web[1] will be created
+  + resource "fakecloud_instance" "web" {
+      + id         = (known after apply)
+      + name       = "golden-web-b"
+      + network_id = (known after apply)
+      + private_ip = (known after apply)
+      + size       = "small"
+      + status     = "running"
+      + tags       = {}
+    }
+
+  # fakecloud_network.main will be created
+  + resource "fakecloud_network" "main" {
+      + cidr = "10.1.0.0/16"
+      + id   = (known after apply)
+      + name = "golden-net"
+    }
+
+  # local_file.readme will be created
+  + resource "local_file" "readme" {
+      + content         = "managed by plait for golden\n"
+      + content_sha256  = "8b654d7e71619dfd7ee9f100aa0eeb2b9ea440a732e189fd6548ae8b3ca1b624"
+      + file_permission = "0644"
+      + id              = "out/README.txt"
+      + path            = "out/README.txt"
+      + size            = 28
+    }
+
+Plan: 6 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + ips        = [(known after apply), (known after apply)]
+  + readme_sha = "8b654d7e71619dfd7ee9f100aa0eeb2b9ea440a732e189fd6548ae8b3ca1b624"
+
+--- apply steps ---
+fakecloud_bucket.data["logs"] (create)
+fakecloud_bucket.data["media"] (create)
+fakecloud_instance.web[0] (create)
+fakecloud_instance.web[1] (create)
+fakecloud_network.main (create)
+local_file.readme (create)
+--- ordering (step: runs after) ---
+fakecloud_instance.web[0] (create): fakecloud_network.main (create)
+fakecloud_instance.web[1] (create): fakecloud_network.main (create)

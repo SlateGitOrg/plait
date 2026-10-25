@@ -1,0 +1,6 @@
+provider "fakecloud" { endpoint = "http://fakecloud.invalid" }
+
+resource "fakecloud_bucket" "data" {
+  count = 1
+  name  = "data-${count.index}"
+}

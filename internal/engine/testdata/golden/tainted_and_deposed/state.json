@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "lineage": "00000000000000000000000000000003",
+  "serial": 2,
+  "outputs": {},
+  "resources": [
+    {
+      "address": "fakecloud_bucket.assets", "type": "fakecloud_bucket", "name": "assets", "provider": "fakecloud",
+      "current": { "status": "tainted", "attributes": { "id": "bkt-0009", "name": "assets", "versioning": false, "arn": "fc:bucket:assets" } }
+    },
+    {
+      "address": "fakecloud_network.main", "type": "fakecloud_network", "name": "main", "provider": "fakecloud",
+      "current": { "status": "ready", "attributes": { "id": "net-0002", "name": "app-net", "cidr": "10.0.0.0/16" } },
+      "deposed": { "status": "ready", "attributes": { "id": "net-0001", "name": "app-net", "cidr": "10.9.0.0/16" } }
+    }
+  ]
+}

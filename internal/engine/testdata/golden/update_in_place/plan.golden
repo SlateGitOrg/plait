@@ -1,0 +1,17 @@
+plait will perform the following actions:
+
+  # fakecloud_instance.web will be updated in-place
+  ~ resource "fakecloud_instance" "web" {
+      ~ size = "small" -> "large"
+      ~ tags = { env = "dev" } -> { env = "prod", team = "web" }
+        # (5 unchanged attributes hidden)
+    }
+
+Plan: 0 to add, 1 to change, 0 to destroy.
+
+Changes to Outputs:
+  ~ web_size = "small" -> "large"
+
+--- apply steps ---
+fakecloud_instance.web (update)
+--- ordering (step: runs after) ---

@@ -1,0 +1,29 @@
+plait will perform the following actions:
+
+  # fakecloud_instance.web must be replaced
+-/+ resource "fakecloud_instance" "web" {
+      ~ id         = "i-0001" -> (known after apply)
+      ~ network_id = "net-0001" -> (known after apply) # forces replacement
+      ~ private_ip = "10.0.0.4" -> (known after apply)
+        # (4 unchanged attributes hidden)
+    }
+
+  # fakecloud_network.main must be replaced
+-/+ resource "fakecloud_network" "main" {
+      ~ cidr = "10.0.0.0/16" -> "10.1.0.0/16" # forces replacement
+      ~ id   = "net-0001" -> (known after apply)
+        # (1 unchanged attribute hidden)
+    }
+
+Plan: 2 to add, 0 to change, 2 to destroy.
+
+--- apply steps ---
+fakecloud_instance.web (create)
+fakecloud_instance.web (destroy)
+fakecloud_network.main (create)
+fakecloud_network.main (destroy)
+--- ordering (step: runs after) ---
+fakecloud_instance.web (create): fakecloud_instance.web (destroy)
+fakecloud_instance.web (create): fakecloud_network.main (create)
+fakecloud_network.main (create): fakecloud_network.main (destroy)
+fakecloud_network.main (destroy): fakecloud_instance.web (destroy)

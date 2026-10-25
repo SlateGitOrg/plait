@@ -1,0 +1,32 @@
+provider "fakecloud" { endpoint = "http://fakecloud.invalid" }
+
+variable "zones" { default = ["a", "b"] }
+
+locals {
+  name = "golden"
+}
+
+resource "fakecloud_network" "main" {
+  name = "${local.name}-net"
+  cidr = cidrsubnet("10.0.0.0/8", 8, 1)
+}
+
+resource "fakecloud_instance" "web" {
+  count      = length(var.zones)
+  name       = "${local.name}-web-${var.zones[count.index]}"
+  network_id = fakecloud_network.main.id
+}
+
+resource "fakecloud_bucket" "data" {
+  for_each   = { logs = false, media = true }
+  name       = "${local.name}-${each.key}"
+  versioning = each.value
+}
+
+resource "local_file" "readme" {
+  path    = "out/README.txt"
+  content = "managed by plait for ${local.name}\n"
+}
+
+output "ips" { value = fakecloud_instance.web[*].private_ip }
+output "readme_sha" { value = local_file.readme.content_sha256 }

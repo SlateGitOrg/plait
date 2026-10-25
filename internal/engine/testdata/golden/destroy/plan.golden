@@ -1,0 +1,30 @@
+plait will perform the following actions:
+
+  # fakecloud_instance.web will be destroyed
+  - resource "fakecloud_instance" "web" {
+      - id         = "i-0001" -> null
+      - name       = "app-web" -> null
+      - network_id = "net-0001" -> null
+      - private_ip = "10.0.0.4" -> null
+      - size       = "small" -> null
+      - status     = "running" -> null
+      - tags       = { env = "dev" } -> null
+    }
+
+  # fakecloud_network.main will be destroyed
+  - resource "fakecloud_network" "main" {
+      - cidr = "10.0.0.0/16" -> null
+      - id   = "net-0001" -> null
+      - name = "app-net" -> null
+    }
+
+Plan: 0 to add, 0 to change, 2 to destroy.
+
+Changes to Outputs:
+  - web_size = "small" -> null
+
+--- apply steps ---
+fakecloud_instance.web (destroy)
+fakecloud_network.main (destroy)
+--- ordering (step: runs after) ---
+fakecloud_network.main (destroy): fakecloud_instance.web (destroy)

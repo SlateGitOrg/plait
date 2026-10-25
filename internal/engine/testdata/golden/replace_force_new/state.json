@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "lineage": "00000000000000000000000000000001",
+  "serial": 3,
+  "outputs": { "web_size": "small" },
+  "resources": [
+    {
+      "address": "fakecloud_instance.web", "type": "fakecloud_instance", "name": "web", "provider": "fakecloud",
+      "current": { "status": "ready", "attributes": {
+        "id": "i-0001", "name": "app-web", "size": "small", "network_id": "net-0001",
+        "tags": { "env": "dev" }, "private_ip": "10.0.0.4", "status": "running" } },
+      "dependencies": ["fakecloud_network.main"]
+    },
+    {
+      "address": "fakecloud_network.main", "type": "fakecloud_network", "name": "main", "provider": "fakecloud",
+      "current": { "status": "ready", "attributes": { "id": "net-0001", "name": "app-net", "cidr": "10.0.0.0/16" } }
+    }
+  ]
+}

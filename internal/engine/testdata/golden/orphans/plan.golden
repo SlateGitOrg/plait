@@ -1,0 +1,29 @@
+plait will perform the following actions:
+
+  # fakecloud_bucket.data[1] will be destroyed
+  # (because its key is no longer produced by count/for_each)
+  - resource "fakecloud_bucket" "data" {
+      - arn        = "fc:bucket:data-1" -> null
+      - id         = "bkt-0002" -> null
+      - name       = "data-1" -> null
+      - versioning = false -> null
+    }
+
+  # fakecloud_bucket.old will be destroyed
+  # (because it is no longer in the configuration)
+  - resource "fakecloud_bucket" "old" {
+      - arn        = "fc:bucket:old" -> null
+      - id         = "bkt-0003" -> null
+      - name       = "old" -> null
+      - versioning = true -> null
+    }
+
+Plan: 0 to add, 0 to change, 2 to destroy.
+
+Changes to Outputs:
+  - legacy = "x" -> null
+
+--- apply steps ---
+fakecloud_bucket.data[1] (destroy)
+fakecloud_bucket.old (destroy)
+--- ordering (step: runs after) ---
