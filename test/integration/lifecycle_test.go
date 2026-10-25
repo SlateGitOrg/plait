@@ -319,6 +319,12 @@ func TestSavedPlansAndStaleness(t *testing.T) {
 	if _, err := e.workspace(4).ApplySaved(context.Background(), planPath); err == nil || !strings.Contains(err.Error(), "different configuration") {
 		t.Fatalf("plan for old config accepted: %v", err)
 	}
+	// Restoring the reviewed configuration makes the saved destroy plan valid again.
+	e.write(stack)
+	res, err = e.workspace(4).ApplySaved(context.Background(), planPath)
+	if err != nil || res.Err() != nil || res.Destroyed != 6 || !e.state().Empty() {
+		t.Fatalf("saved destroy plan: %v %+v", err, res)
+	}
 }
 
 func TestStateLockExcludesConcurrentRuns(t *testing.T) {
