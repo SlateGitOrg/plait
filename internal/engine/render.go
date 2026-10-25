@@ -99,7 +99,8 @@ func (r *renderer) drift(ds []Drift) {
 		case "recovered":
 			r.line("  # " + name + " was being created when plait was interrupted; the object exists and is now tracked")
 		case "abandoned":
-			r.line("  # " + name + " was being created when plait was interrupted; no object was created")
+			r.line("  # " + name + " was being created when plait was interrupted; no object was found, so it will be created again")
+			r.line("  # (reusing the interrupted request's idempotency key, so a late-arriving original cannot duplicate it)")
 		case "changed":
 			r.line("  # " + name + " has changed")
 			for _, k := range unionKeys(d.Before, d.After) {

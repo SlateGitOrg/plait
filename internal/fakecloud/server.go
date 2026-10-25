@@ -16,7 +16,9 @@
 package fakecloud
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
 	"errors"
 	"fmt"
 	"net"
@@ -55,7 +57,9 @@ type Faults struct {
 	// FailAfterCommit makes the next N matching requests commit their change
 	// and then fail with 500, so the client cannot know it succeeded.
 	FailAfterCommit map[string]int `json:"fail_after_commit,omitempty"`
-	// LatencyMS delays every API request.
+	// LatencyMS delays every API request after its body has been received
+	// and before it is processed, like a slow but reliable backend: a
+	// client that disconnects during the delay does not cancel the work.
 	LatencyMS int `json:"latency_ms,omitempty"`
 }
 
@@ -209,6 +213,14 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	s.track(+1)
 	defer s.track(-1)
+	if r.Body != nil {
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "reading body: " + err.Error()})
+			return
+		}
+		r.Body = io.NopCloser(bytes.NewReader(body))
+	}
 	if d := s.latency(); d > 0 {
 		time.Sleep(d)
 	}

@@ -341,7 +341,10 @@ func (a *applier) create(ctx context.Context, c *ResourceChange) error {
 	if err != nil {
 		return err
 	}
-	token := state.NewToken()
+	token := c.CreateToken
+	if token == "" {
+		token = state.NewToken()
+	}
 	a.mu.Lock()
 	si := a.ws.Get(c.Addr)
 	if si == nil {

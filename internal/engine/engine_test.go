@@ -78,6 +78,13 @@ func (m *mockProvider) ApplyResource(_ context.Context, req provider.ApplyReques
 	case req.Prior.IsNull():
 		name := provider.StringAttr(req.Planned, "name")
 		m.ops = append(m.ops, "create "+name)
+		for _, o := range m.objects {
+			if provider.StringAttr(o, "token") == req.CreateToken {
+				cp := o.AsMap()
+				delete(cp, "token")
+				return provider.ApplyResponse{New: value.Map(cp)}, nil // idempotent replay
+			}
+		}
 		if m.failCreate[name] && !m.partial[name] {
 			return provider.ApplyResponse{}, errors.New("create refused")
 		}
@@ -230,6 +237,39 @@ func TestLostCreateIsRecoveredByToken(t *testing.T) {
 	}
 	if len(m.objects) != 1 {
 		t.Fatalf("objects %d", len(m.objects))
+	}
+}
+
+// TestAbandonedCreateReusesItsToken covers the race where an interrupted
+// create is still in flight when the next run looks for it: the lookup
+// misses, the late request then commits, and the re-create must not make a
+// second object.
+func TestAbandonedCreateReusesItsToken(t *testing.T) {
+	m := newMock()
+	m.failCreate["a"] = true // first attempt: nothing committed yet
+	e := mockEngine(t, m, `resource "mock_thing" "a" { name = "a" }`)
+	_, res := planApply(t, e, state.New(), PlanOptions{})
+	token := res.State.Instances["mock_thing.a"].Current.CreateToken
+	m.failCreate["a"] = false
+	p, err := e.Plan(context.Background(), res.State, PlanOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(p.Drift) != 1 || p.Drift[0].Kind != "abandoned" || p.Changes[0].CreateToken != token {
+		t.Fatalf("token not carried over: drift %+v change %+v", p.Drift, p.Changes[0])
+	}
+	// The original request commits late, after the lookup missed it.
+	m.objects["late"] = value.Map(map[string]value.Value{"id": value.String("late"), "name": value.String("a"),
+		"value": value.Null, "zone": value.Null, "label": value.String("auto"), "token": value.String(token)})
+	r2, err := e.Apply(context.Background(), p, nil)
+	if err != nil || r2.Err() != nil {
+		t.Fatal(err, r2.Err())
+	}
+	if len(m.objects) != 1 {
+		t.Fatalf("duplicate object created: %d", len(m.objects))
+	}
+	if id, _ := r2.State.Instances["mock_thing.a"].Current.Attrs.Get("id"); id.AsString() != "late" {
+		t.Fatalf("state should track the late object, got %s", id.GoString())
 	}
 }
 

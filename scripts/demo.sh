@@ -59,6 +59,7 @@ APPLY_PID=$!
 sleep 0.7
 kill -9 "$APPLY_PID"
 wait "$APPLY_PID" 2>/dev/null || true
+sleep 0.5 # the fake cloud finishes the request the dead client had already sent
 api POST /v1/_faults '{}' >/dev/null
 echo "killed plait (pid $APPLY_PID) mid-apply; its last progress lines:"
 tail -n 3 crash.log

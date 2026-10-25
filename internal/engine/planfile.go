@@ -18,11 +18,12 @@ type changeJSON struct {
 }
 
 type driftJSON struct {
-	Address string      `json:"address"`
-	Deposed bool        `json:"deposed,omitempty"`
-	Kind    string      `json:"kind"`
-	Before  value.Value `json:"before"`
-	After   value.Value `json:"after"`
+	Address     string      `json:"address"`
+	Deposed     bool        `json:"deposed,omitempty"`
+	Kind        string      `json:"kind"`
+	Before      value.Value `json:"before"`
+	After       value.Value `json:"after"`
+	CreateToken string      `json:"create_token,omitempty"`
 }
 
 type planJSON struct {
@@ -50,7 +51,7 @@ func MarshalPlan(p *Plan) ([]byte, error) {
 		pj.Changes = append(pj.Changes, changeJSON{Address: c.Addr.String(), ResourceChange: c})
 	}
 	for _, d := range p.Drift {
-		pj.Drift = append(pj.Drift, driftJSON{Address: d.Addr.String(), Deposed: d.Deposed, Kind: d.Kind, Before: d.Before, After: d.After})
+		pj.Drift = append(pj.Drift, driftJSON{Address: d.Addr.String(), Deposed: d.Deposed, Kind: d.Kind, Before: d.Before, After: d.After, CreateToken: d.CreateToken})
 	}
 	for ra, keys := range p.Expanded {
 		r, err := parseResource(ra)
@@ -96,7 +97,7 @@ func UnmarshalPlan(data []byte) (*Plan, error) {
 		if err != nil {
 			return nil, err
 		}
-		p.Drift = append(p.Drift, Drift{Addr: a, Deposed: dj.Deposed, Kind: dj.Kind, Before: dj.Before, After: dj.After})
+		p.Drift = append(p.Drift, Drift{Addr: a, Deposed: dj.Deposed, Kind: dj.Kind, Before: dj.Before, After: dj.After, CreateToken: dj.CreateToken})
 	}
 	for ra, list := range pj.Expanded {
 		keys := make([]addr.Key, len(list))

@@ -51,6 +51,11 @@ type ResourceChange struct {
 	Each value.Value `json:"each,omitempty"`
 	// Dependencies are the resource addresses this instance depends on.
 	Dependencies []string `json:"dependencies,omitempty"`
+	// CreateToken, when set, is the idempotency key a create must reuse:
+	// it is carried over from an interrupted create whose object could not
+	// be found, so a request that is still in flight cannot produce a
+	// second object.
+	CreateToken string `json:"create_token,omitempty"`
 	// Provider is the provider name managing the object.
 	Provider string `json:"provider"`
 }
@@ -70,6 +75,8 @@ type Drift struct {
 	Kind    string // "deleted", "changed", "recovered", "abandoned"
 	Before  value.Value
 	After   value.Value
+	// CreateToken is the idempotency key of an abandoned create.
+	CreateToken string
 }
 
 // Plan is the full set of changes needed to converge.
@@ -214,6 +221,12 @@ func (e *Engine) planConverge(ctx context.Context, p *Plan, st *state.State) err
 		}), nil
 	})
 	inConfig := map[string]bool{}
+	tokens := map[addr.Instance]string{}
+	for _, d := range p.Drift {
+		if d.Kind == "abandoned" {
+			tokens[d.Addr] = d.CreateToken
+		}
+	}
 	for _, node := range order {
 		r, ok := e.Config.Resources[node]
 		if !ok {
@@ -237,6 +250,9 @@ func (e *Engine) planConverge(ctx context.Context, p *Plan, st *state.State) err
 				return fmt.Errorf("%s: %w", ia, err)
 			}
 			ch.Dependencies = deps
+			if ch.Action == Create {
+				ch.CreateToken = tokens[ia]
+			}
 			p.Changes = append(p.Changes, ch)
 			if ch.Action == NoOp {
 				planned[ia.String()] = ch.Before
@@ -467,7 +483,7 @@ func (e *Engine) refresh(ctx context.Context, st *state.State, full bool) ([]Dri
 		var next *state.Object
 		switch {
 		case pending && resp.Current.IsNull():
-			d = &Drift{Addr: j.inst.Addr, Kind: "abandoned", Before: obj.Attrs, After: value.Null}
+			d = &Drift{Addr: j.inst.Addr, Kind: "abandoned", Before: obj.Attrs, After: value.Null, CreateToken: obj.CreateToken}
 		case pending:
 			next = &state.Object{Status: state.StatusReady, Attrs: resp.Current}
 			d = &Drift{Addr: j.inst.Addr, Kind: "recovered", Before: obj.Attrs, After: resp.Current}
