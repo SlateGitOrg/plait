@@ -18,9 +18,9 @@ package fakecloud
 import (
 	"bytes"
 	"encoding/json"
-	"io"
 	"errors"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"sort"
