@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -133,35 +132,67 @@ func applyGraph(p *Plan) (*dag.Graph, map[string]step, error) {
 			g.AddEdge(d, a)
 		}
 	}
-	dependsOn := func(c *ResourceChange, ra addr.Resource) bool {
-		return c.Addr.Resource != ra && slices.Contains(c.Dependencies, ra.String())
+	// Index changes by resource, and by the resources they depend on, so
+	// edge construction is linear in the number of dependency pairs rather
+	// than quadratic in the number of changes.
+	byResource := map[string][]*ResourceChange{}
+	dependents := map[string][]*ResourceChange{}
+	for _, c := range p.Changes {
+		ra := c.Addr.Resource.String()
+		byResource[ra] = append(byResource[ra], c)
+		for _, d := range c.Dependencies {
+			if d != ra {
+				dependents[d] = append(dependents[d], c)
+			}
+		}
 	}
 	for _, c := range p.Changes {
-		if a, ok := applyNode[c.Addr]; ok && !c.Deposed {
-			for _, d := range p.Changes {
-				if da, ok := applyNode[d.Addr]; ok && !d.Deposed && dependsOn(c, d.Addr.Resource) {
-					g.AddEdge(a, da)
+		if c.Deposed {
+			continue
+		}
+		ra := c.Addr.Resource.String()
+		if a, ok := applyNode[c.Addr]; ok {
+			for _, dep := range c.Dependencies {
+				if dep == ra {
+					continue
+				}
+				for _, d := range byResource[dep] {
+					if da, ok := applyNode[d.Addr]; ok && !d.Deposed {
+						g.AddEdge(a, da)
+					}
 				}
 			}
 			if dn, ok := deposedNode[c.Addr]; ok && c.Action == CreateThenDelete {
 				g.AddEdge(a, dn) // clear the old deposed slot before deposing again
 			}
 		}
-		if rn, ok := replacedNode[c.Addr]; ok && !c.Deposed {
-			for _, x := range p.Changes {
-				if xa, ok := applyNode[x.Addr]; ok && !x.Deposed && dependsOn(x, c.Addr.Resource) {
+		if rn, ok := replacedNode[c.Addr]; ok {
+			for _, x := range dependents[ra] {
+				if xa, ok := applyNode[x.Addr]; ok && !x.Deposed {
 					g.AddEdge(rn, xa)
 				}
 			}
 		}
 	}
+	// Deletes run dependents-first. Destroy nodes are grouped per instance
+	// address (current and deposed objects alike).
+	depAddrs := map[string][]addr.Instance{} // resource -> dependent instance addresses
+	seen := map[addr.Instance]bool{}
 	for _, c := range p.Changes {
-		for _, dn := range destroyNodes[c.Addr] {
-			for _, y := range p.Changes {
-				if !dependsOn(y, c.Addr.Resource) {
-					continue
-				}
-				for _, yn := range destroyNodes[y.Addr] {
+		if seen[c.Addr] {
+			continue
+		}
+		seen[c.Addr] = true
+		for _, d := range c.Dependencies {
+			if d != c.Addr.Resource.String() {
+				depAddrs[d] = append(depAddrs[d], c.Addr)
+			}
+		}
+	}
+	for a, nodes := range destroyNodes {
+		for _, dn := range nodes {
+			for _, y := range depAddrs[a.Resource.String()] {
+				for _, yn := range destroyNodes[y] {
 					g.AddEdge(dn, yn)
 				}
 			}
