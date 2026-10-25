@@ -145,7 +145,10 @@ func (s *Session) Plan(ctx context.Context, opts engine.PlanOptions) (*engine.Pl
 // Apply applies a plan, persisting state after every step. The plan must
 // have been made against the state currently on disk.
 func (s *Session) Apply(ctx context.Context, p *engine.Plan) (*engine.ApplyResult, error) {
-	if p.PriorState == nil || p.PriorState.Lineage != s.State.Lineage || p.PriorState.Serial != s.State.Serial {
+	// A state that has never been written gets a fresh lineage on every
+	// load, so a plan made against "no state" matches any unwritten state.
+	fresh := s.State.Serial == 0 && p.PriorState != nil && p.PriorState.Serial == 0
+	if p.PriorState == nil || p.PriorState.Serial != s.State.Serial || (!fresh && p.PriorState.Lineage != s.State.Lineage) {
 		return nil, errors.New("the plan is stale: state has changed since it was created; run plan again")
 	}
 	res, err := s.Engine.Apply(ctx, p, func(st *state.State) error { return s.w.Store.Save(st) })

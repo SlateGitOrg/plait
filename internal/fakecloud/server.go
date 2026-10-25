@@ -73,10 +73,16 @@ type Server struct {
 	maxIn    int
 	token    string
 
-	// OnCommit, if set, runs after a mutation commits and before the
-	// response is written. Tests use it to simulate a client crashing at
-	// the worst moment.
-	OnCommit func(ev Event)
+	onCommit func(ev Event)
+}
+
+// SetOnCommit installs a hook that runs after a mutation commits and before
+// the response is written (nil removes it). Tests use it to kill a client
+// at the worst possible moment.
+func (s *Server) SetOnCommit(fn func(ev Event)) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.onCommit = fn
 }
 
 var prefixes = map[string]string{"networks": "net", "instances": "i", "buckets": "bkt"}
@@ -247,7 +253,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if ev != nil {
-		if hook := s.OnCommit; hook != nil {
+		s.mu.Lock()
+		hook := s.onCommit
+		s.mu.Unlock()
+		if hook != nil {
 			hook(*ev)
 		}
 		if ferr := s.fault("FailAfterCommit", op, kind); ferr != nil {

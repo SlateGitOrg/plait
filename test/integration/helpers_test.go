@@ -4,6 +4,10 @@ package integration
 
 import (
 	"context"
+	"fmt"
+	"io"
+	"log/slog"
+	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
@@ -54,7 +58,8 @@ func (e *env) write(src string) {
 func (e *env) workspace(parallelism int) *workspace.Workspace {
 	e.t.Helper()
 	ws, err := workspace.Open(workspace.Options{Dir: e.dir, Parallelism: parallelism,
-		Vars: config.VarInputs{Flags: e.vars}, LockTimeout: time.Second})
+		Vars: config.VarInputs{Flags: e.vars}, LockTimeout: time.Second,
+		Log: slog.New(slog.NewTextHandler(io.Discard, nil))})
 	if err != nil {
 		e.t.Fatal(err)
 	}
@@ -112,4 +117,33 @@ func (e *env) render(p *engine.Plan) string {
 func counts(p *engine.Plan) [3]int {
 	a, c, d := p.Counts()
 	return [3]int{a, c, d}
+}
+
+// cloudDo sends a raw API request to the fake cloud (out-of-band changes).
+func (e *env) cloudDo(method, path, body string) (int, error) {
+	req, err := http.NewRequest(method, e.http.URL+path, strings.NewReader(body))
+	if err != nil {
+		return 0, err
+	}
+	req.Header.Set("Authorization", "Bearer test-token")
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return 0, err
+	}
+	_ = resp.Body.Close()
+	if resp.StatusCode >= 300 {
+		return resp.StatusCode, fmt.Errorf("%s %s: %d", method, path, resp.StatusCode)
+	}
+	return resp.StatusCode, nil
+}
+
+// idOf returns the remote id of a tracked instance.
+func (e *env) idOf(address string) string {
+	e.t.Helper()
+	inst := e.state().Instances[address]
+	if inst == nil || inst.Current == nil {
+		e.t.Fatalf("%s not in state", address)
+	}
+	v, _ := inst.Current.Attrs.Get("id")
+	return v.AsString()
 }
