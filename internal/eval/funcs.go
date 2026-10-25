@@ -189,10 +189,19 @@ func fnFormat(_ *Context, a []value.Value) (value.Value, error) {
 			b.WriteByte(c)
 			continue
 		}
-		if i+1 >= len(spec) {
-			return value.Null, errors.New("format string ends with '%'")
-		}
+		// %[flags][width]verb with flags '-' (left-align) and '0' (zero-pad).
 		i++
+		left, zero, width := false, false, 0
+		for ; i < len(spec) && (spec[i] == '-' || spec[i] == '0'); i++ {
+			left = left || spec[i] == '-'
+			zero = zero || spec[i] == '0'
+		}
+		for ; i < len(spec) && spec[i] >= '0' && spec[i] <= '9'; i++ {
+			width = width*10 + int(spec[i]-'0')
+		}
+		if i >= len(spec) {
+			return value.Null, errors.New("format string ends inside a verb")
+		}
 		verb := spec[i]
 		if verb == '%' {
 			b.WriteByte('%')
@@ -201,39 +210,52 @@ func fnFormat(_ *Context, a []value.Value) (value.Value, error) {
 		if next >= len(args) {
 			return value.Null, fmt.Errorf("not enough arguments for format verb %%%c", verb)
 		}
-		arg := args[next]
-		next++
-		switch verb {
-		case 's', 'v':
-			if verb == 'v' && (arg.Kind() == value.KindList || arg.Kind() == value.KindMap) {
-				b.WriteString(arg.GoString())
-				continue
-			}
-			s, err := arg.ToString()
-			if err != nil {
-				return value.Null, err
-			}
-			b.WriteString(s)
-		case 'd':
-			n, err := arg.ToNumber()
-			if err != nil {
-				return value.Null, err
-			}
-			b.WriteString(value.FormatNumber(math.Trunc(n)))
-		case 'q':
-			s, err := arg.ToString()
-			if err != nil {
-				return value.Null, err
-			}
-			b.WriteString(fmt.Sprintf("%q", s))
-		default:
-			return value.Null, fmt.Errorf("unsupported format verb %%%c", verb)
+		piece, err := formatVerb(verb, args[next])
+		if err != nil {
+			return value.Null, err
 		}
+		next++
+		if pad := width - len([]rune(piece)); pad > 0 {
+			switch {
+			case left:
+				piece += strings.Repeat(" ", pad)
+			case zero && verb == 'd' && strings.HasPrefix(piece, "-"):
+				piece = "-" + strings.Repeat("0", pad) + piece[1:]
+			case zero && verb == 'd':
+				piece = strings.Repeat("0", pad) + piece
+			default:
+				piece = strings.Repeat(" ", pad) + piece
+			}
+		}
+		b.WriteString(piece)
 	}
 	if next != len(args) {
 		return value.Null, fmt.Errorf("too many arguments: format uses %d, got %d", next, len(args))
 	}
 	return value.String(b.String()), nil
+}
+
+func formatVerb(verb byte, arg value.Value) (string, error) {
+	switch verb {
+	case 's', 'v':
+		if verb == 'v' && (arg.Kind() == value.KindList || arg.Kind() == value.KindMap) {
+			return arg.GoString(), nil
+		}
+		return arg.ToString()
+	case 'd':
+		n, err := arg.ToNumber()
+		if err != nil {
+			return "", err
+		}
+		return value.FormatNumber(math.Trunc(n)), nil
+	case 'q':
+		s, err := arg.ToString()
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf("%q", s), nil
+	}
+	return "", fmt.Errorf("unsupported format verb %%%c", verb)
 }
 
 func fnSubstr(_ *Context, a []value.Value) (value.Value, error) {
