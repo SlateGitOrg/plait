@@ -5,7 +5,7 @@ export GOFLAGS ?= -p=3
 COVER_MIN ?= 80
 COVERPKG := ./internal/...
 
-.PHONY: check fmt fmt-check vet lint test cover build demo bench fuzz clean
+.PHONY: check fmt fmt-check vet lint test cover build demo bench fuzz loc clean
 
 check: fmt-check vet lint cover ## format, vet (type-check), lint, race tests + coverage gate
 
@@ -41,6 +41,11 @@ bench:
 fuzz:
 	$(GO) test -run '^$$' -fuzz FuzzParseFile -fuzztime 30s ./internal/syntax
 	$(GO) test -run '^$$' -fuzz FuzzJSONRoundTrip -fuzztime 30s ./internal/value
+
+# Line counts quoted in the README (all lines, including comments and blanks).
+loc:
+	@printf 'non-test Go source: '; find cmd internal -name '*.go' ! -name '*_test.go' | xargs cat | wc -l
+	@printf 'test Go source:     '; find cmd internal test -name '*_test.go' | xargs cat | wc -l
 
 clean:
 	rm -rf bin coverage.out coverage.html demo-work

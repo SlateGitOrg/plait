@@ -19,7 +19,8 @@ $ plait plan
 ```
 
 **Who it is for:** engineers who use Terraform/OpenTofu and want to see the
-plan/apply/state model in about 9k lines of readable Go, and anyone who needs
+plan/apply/state model in about 9,400 lines of readable Go (plus about 3,700
+lines of tests; counted by `make loc`), and anyone who needs
 a compact reference for dependency-ordered, crash-safe reconciliation. It is
 a learning and portfolio project, not a Terraform replacement: it manages
 local files and the in-repo fake cloud only.
@@ -317,9 +318,10 @@ so these measure engine overhead only). Apple M1 Pro, Go 1.27.1:
 | `BenchmarkApply1000` | 31.5 ms | 77,004 |
 | `BenchmarkTopoSort10k` (DAG of 10k nodes) | 14.4 ms | 40,287 |
 
-Both plan and apply scale linearly (10× resources → ~13× time). Building
-the apply graph was quadratic in the number of changes in an earlier version
-(115 ms for 1,000 resources); indexing changes by resource made it linear.
+Going from 100 to 1,000 resources costs roughly 13× the time for both plan
+and apply, i.e. close to linear. The apply-graph builder was originally
+quadratic in the number of changes (every change compared with every other);
+it now indexes changes by resource and by dependency (commit `47a4121`).
 Real applies are dominated by provider latency and by the full state rewrite
 after every step, which the benchmark deliberately excludes.
 
