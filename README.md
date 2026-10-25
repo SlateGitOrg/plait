@@ -291,9 +291,9 @@ Coverage from the last run (`make cover`, which prints this table):
   internal/cli                     85.4%
   internal/config                  95.0%
   internal/dag                     99.0%
-  internal/engine                  89.7%
+  internal/engine                  89.6%
   internal/eval                    86.7%
-  internal/fakecloud               95.5%
+  internal/fakecloud               95.0%
   internal/provider               100.0%
   internal/provider/cloudprov      89.6%
   internal/provider/localfs        82.4%
@@ -301,7 +301,7 @@ Coverage from the last run (`make cover`, which prints this table):
   internal/syntax                  93.6%
   internal/value                   94.5%
   internal/workspace               86.8%
-total core coverage: 91.0% of statements (minimum 80%)
+total core coverage: 90.9% of statements (minimum 80%)
 ```
 
 ## Benchmarks
