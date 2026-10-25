@@ -55,11 +55,17 @@ var schema = provider.Schema{
 
 // Provider implements provider.Provider for the local filesystem.
 type Provider struct {
+	base string // directory a relative root resolves against
 	root string
 }
 
-// New returns an unconfigured provider.
+// New returns an unconfigured provider whose relative root resolves
+// against the process working directory.
 func New() provider.Provider { return &Provider{} }
+
+// NewAt returns an unconfigured provider whose relative root (and default
+// root) resolves against base, normally the configuration directory.
+func NewAt(base string) provider.Provider { return &Provider{base: base} }
 
 // Schema implements provider.Provider.
 func (p *Provider) Schema() provider.Schema { return schema }
@@ -69,6 +75,9 @@ func (p *Provider) Configure(_ context.Context, cfg value.Value) error {
 	root := provider.StringAttr(cfg, "root")
 	if root == "" {
 		root = "."
+	}
+	if !filepath.IsAbs(root) && p.base != "" {
+		root = filepath.Join(p.base, root)
 	}
 	abs, err := filepath.Abs(root)
 	if err != nil {

@@ -3,6 +3,8 @@
 package config
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"os"
@@ -28,6 +30,10 @@ type Config struct {
 	Resources map[string]*Resource // keyed by "type.name"
 	Outputs   map[string]*Output
 	Providers map[string]*Provider
+	// Digest is a SHA-256 over every source file name and content. Saved
+	// plans record it so that applying a plan against edited
+	// configuration is refused.
+	Digest string
 
 	graph *dag.Graph
 }
@@ -141,6 +147,11 @@ func LoadFiles(dir string, files map[string]string) (*Config, error) {
 		names = append(names, n)
 	}
 	sort.Strings(names)
+	h := sha256.New()
+	for _, n := range names {
+		fmt.Fprintf(h, "%d:%s\x00%d:%s\x00", len(n), n, len(files[n]), files[n])
+	}
+	cfg.Digest = hex.EncodeToString(h.Sum(nil))
 	var diags Diagnostics
 	for _, n := range names {
 		f, err := syntax.ParseFile(n, files[n])
