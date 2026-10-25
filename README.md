@@ -308,18 +308,20 @@ total core coverage: 90.9% of statements (minimum 80%)
 
 `make bench` (synthetic configurations of N resources in chains of five,
 each referencing its predecessor; in-memory provider, no state persistence,
-so these measure engine overhead only). Apple M1 Pro, Go 1.27.1:
+so these measure engine overhead only). Apple M1 Pro, Go 1.27.1, measured
+while other builds were sharing the machine (load average ≈ 6), so expect
+run-to-run noise of tens of percent:
 
 | Benchmark | Time/op | Allocs/op |
 |---|---|---|
-| `BenchmarkPlan100` | 0.95 ms | 3,993 |
-| `BenchmarkPlan1000` | 13.0 ms | 39,168 |
-| `BenchmarkApply100` | 2.5 ms | 7,873 |
-| `BenchmarkApply1000` | 31.5 ms | 77,004 |
-| `BenchmarkTopoSort10k` (DAG of 10k nodes) | 14.4 ms | 40,287 |
+| `BenchmarkPlan100` | 1.37 ms | 3,993 |
+| `BenchmarkPlan1000` | 14.3 ms | 39,168 |
+| `BenchmarkApply100` | 3.9 ms | 7,874 |
+| `BenchmarkApply1000` | 31.5 ms | 77,013 |
+| `BenchmarkTopoSort10k` (DAG of 10k nodes) | 19.0 ms | 40,287 |
 
-Going from 100 to 1,000 resources costs roughly 13× the time for both plan
-and apply, i.e. close to linear. The apply-graph builder was originally
+Going from 100 to 1,000 resources costs roughly 8–10× the time for both
+plan and apply, i.e. close to linear. The apply-graph builder was originally
 quadratic in the number of changes (every change compared with every other);
 it now indexes changes by resource and by dependency (commit `47a4121`).
 Real applies are dominated by provider latency and by the full state rewrite

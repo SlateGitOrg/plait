@@ -23,6 +23,7 @@ var tStr = value.Type{Kind: value.TypeString}
 type mockProvider struct {
 	mu      sync.Mutex
 	objects map[string]value.Value // id -> object
+	byToken map[string]string      // create token -> id
 	nextID  int
 	ops     []string
 	// failCreate makes creating an object with this name fail. If partial
@@ -48,7 +49,7 @@ var mockSchema = provider.Schema{Resources: map[string]provider.ResourceSchema{
 }}
 
 func newMock() *mockProvider {
-	return &mockProvider{objects: map[string]value.Value{}, failCreate: map[string]bool{},
+	return &mockProvider{objects: map[string]value.Value{}, byToken: map[string]string{}, failCreate: map[string]bool{},
 		partial: map[string]bool{}, lost: map[string]bool{}}
 }
 
@@ -78,8 +79,8 @@ func (m *mockProvider) ApplyResource(_ context.Context, req provider.ApplyReques
 	case req.Prior.IsNull():
 		name := provider.StringAttr(req.Planned, "name")
 		m.ops = append(m.ops, "create "+name)
-		for _, o := range m.objects {
-			if provider.StringAttr(o, "token") == req.CreateToken {
+		if id, ok := m.byToken[req.CreateToken]; ok {
+			if o, live := m.objects[id]; live {
 				cp := o.AsMap()
 				delete(cp, "token")
 				return provider.ApplyResponse{New: value.Map(cp)}, nil // idempotent replay
@@ -95,6 +96,7 @@ func (m *mockProvider) ApplyResource(_ context.Context, req provider.ApplyReques
 		}
 		obj = obj.With("token", value.String(req.CreateToken))
 		m.objects[provider.StringAttr(obj, "id")] = obj
+		m.byToken[req.CreateToken] = provider.StringAttr(obj, "id")
 		stored := obj.AsMap()
 		delete(stored, "token")
 		if m.lost[name] {
@@ -115,12 +117,10 @@ func (m *mockProvider) ReadResource(_ context.Context, req provider.ReadRequest)
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	if req.Pending {
-		for _, o := range m.objects {
-			if provider.StringAttr(o, "token") == req.CreateToken {
-				cp := o.AsMap()
-				delete(cp, "token")
-				return provider.ReadResponse{Current: value.Map(cp)}, nil
-			}
+		if o, ok := m.objects[m.byToken[req.CreateToken]]; ok {
+			cp := o.AsMap()
+			delete(cp, "token")
+			return provider.ReadResponse{Current: value.Map(cp)}, nil
 		}
 		return provider.ReadResponse{Current: value.Null}, nil
 	}
@@ -261,6 +261,7 @@ func TestAbandonedCreateReusesItsToken(t *testing.T) {
 	// The original request commits late, after the lookup missed it.
 	m.objects["late"] = value.Map(map[string]value.Value{"id": value.String("late"), "name": value.String("a"),
 		"value": value.Null, "zone": value.Null, "label": value.String("auto"), "token": value.String(token)})
+	m.byToken[token] = "late"
 	r2, err := e.Apply(context.Background(), p, nil)
 	if err != nil || r2.Err() != nil {
 		t.Fatal(err, r2.Err())
