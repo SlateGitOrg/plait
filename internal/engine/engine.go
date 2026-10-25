@@ -24,11 +24,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/archit2501/plait/internal/addr"
-	"github.com/archit2501/plait/internal/config"
-	"github.com/archit2501/plait/internal/eval"
-	"github.com/archit2501/plait/internal/provider"
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/addr"
+	"github.com/SlateGitOrg/plait/internal/config"
+	"github.com/SlateGitOrg/plait/internal/eval"
+	"github.com/SlateGitOrg/plait/internal/provider"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 // DefaultParallelism is the default number of concurrent provider operations.

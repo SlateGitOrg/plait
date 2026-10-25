@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/archit2501/plait/internal/cli"
-	"github.com/archit2501/plait/internal/engine"
-	"github.com/archit2501/plait/internal/fakecloud"
-	"github.com/archit2501/plait/internal/state"
+	"github.com/SlateGitOrg/plait/internal/cli"
+	"github.com/SlateGitOrg/plait/internal/engine"
+	"github.com/SlateGitOrg/plait/internal/fakecloud"
+	"github.com/SlateGitOrg/plait/internal/state"
 )
 
 // TestMain lets the test binary double as the plait CLI: the crash tests

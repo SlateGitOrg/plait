@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/archit2501/plait/internal/addr"
-	"github.com/archit2501/plait/internal/dag"
-	"github.com/archit2501/plait/internal/syntax"
+	"github.com/SlateGitOrg/plait/internal/addr"
+	"github.com/SlateGitOrg/plait/internal/dag"
+	"github.com/SlateGitOrg/plait/internal/syntax"
 )
 
 // Graph node name prefixes for non-resource objects.

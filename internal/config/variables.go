@@ -8,9 +8,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/archit2501/plait/internal/eval"
-	"github.com/archit2501/plait/internal/syntax"
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/eval"
+	"github.com/SlateGitOrg/plait/internal/syntax"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 // VarsFileExt is the extension of variable definition files.

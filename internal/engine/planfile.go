@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/archit2501/plait/internal/addr"
-	"github.com/archit2501/plait/internal/state"
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/addr"
+	"github.com/SlateGitOrg/plait/internal/state"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 // PlanFormatVersion is the saved plan format version.

@@ -11,7 +11,7 @@ summary=$(awk 'NR > 1 {
 } END {
   for (k in stmts) {
     file = k; sub(/:.*/, "", file)
-    pkg = file; sub(/\/[^\/]*$/, "", pkg); sub(/^github.com\/archit2501\/plait\//, "", pkg)
+    pkg = file; sub(/\/[^\/]*$/, "", pkg); sub(/^github.com\/SlateGitOrg\/plait\//, "", pkg)
     total[pkg] += stmts[k]; all += stmts[k]
     if (k in hit) { covered[pkg] += stmts[k]; allc += stmts[k] }
   }

@@ -4,7 +4,7 @@ package main
 import (
 	"os"
 
-	"github.com/archit2501/plait/internal/cli"
+	"github.com/SlateGitOrg/plait/internal/cli"
 )
 
 func main() {

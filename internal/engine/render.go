@@ -6,7 +6,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 // RenderOptions controls plan rendering.

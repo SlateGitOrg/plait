@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/archit2501/plait/internal/addr"
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/addr"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 // FormatVersion is the state file format version.

@@ -14,13 +14,13 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/archit2501/plait/internal/config"
-	"github.com/archit2501/plait/internal/engine"
-	"github.com/archit2501/plait/internal/provider"
-	"github.com/archit2501/plait/internal/provider/cloudprov"
-	"github.com/archit2501/plait/internal/provider/localfs"
-	"github.com/archit2501/plait/internal/state"
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/config"
+	"github.com/SlateGitOrg/plait/internal/engine"
+	"github.com/SlateGitOrg/plait/internal/provider"
+	"github.com/SlateGitOrg/plait/internal/provider/cloudprov"
+	"github.com/SlateGitOrg/plait/internal/provider/localfs"
+	"github.com/SlateGitOrg/plait/internal/state"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 // DefaultStateFile is the state file name inside the configuration

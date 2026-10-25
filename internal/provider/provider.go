@@ -15,7 +15,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 // Attribute describes one attribute of a resource or provider schema.

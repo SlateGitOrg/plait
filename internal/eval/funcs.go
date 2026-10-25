@@ -14,7 +14,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 // Function is a built-in function.

@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/archit2501/plait/internal/syntax"
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/syntax"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 // Error is an evaluation error tied to a source position.

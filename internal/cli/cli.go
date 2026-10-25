@@ -18,11 +18,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/archit2501/plait/internal/config"
-	"github.com/archit2501/plait/internal/engine"
-	"github.com/archit2501/plait/internal/state"
-	"github.com/archit2501/plait/internal/value"
-	"github.com/archit2501/plait/internal/workspace"
+	"github.com/SlateGitOrg/plait/internal/config"
+	"github.com/SlateGitOrg/plait/internal/engine"
+	"github.com/SlateGitOrg/plait/internal/state"
+	"github.com/SlateGitOrg/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/workspace"
 )
 
 // Version is the plait version, overridable at link time.

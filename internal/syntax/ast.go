@@ -3,7 +3,7 @@ package syntax
 import (
 	"fmt"
 
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 func sprintf(format string, args ...any) string { return fmt.Sprintf(format, args...) }

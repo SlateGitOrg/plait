@@ -25,8 +25,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/archit2501/plait/internal/provider"
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/provider"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 // Name is the provider name (resource type prefix).

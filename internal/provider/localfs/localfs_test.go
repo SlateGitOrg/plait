@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/archit2501/plait/internal/provider"
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/provider"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 func configured(t *testing.T) (provider.Provider, string) {

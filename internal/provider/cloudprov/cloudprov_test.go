@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/archit2501/plait/internal/fakecloud"
-	"github.com/archit2501/plait/internal/provider"
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/fakecloud"
+	"github.com/SlateGitOrg/plait/internal/provider"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 func setup(t *testing.T, token string) (provider.Provider, *fakecloud.Server) {

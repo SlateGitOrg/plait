@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/archit2501/plait/internal/fakecloud"
+	"github.com/SlateGitOrg/plait/internal/fakecloud"
 )
 
 // fakecloud runs the in-repo fake cloud API until interrupted.

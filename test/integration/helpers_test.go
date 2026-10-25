@@ -15,11 +15,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/archit2501/plait/internal/config"
-	"github.com/archit2501/plait/internal/engine"
-	"github.com/archit2501/plait/internal/fakecloud"
-	"github.com/archit2501/plait/internal/state"
-	"github.com/archit2501/plait/internal/workspace"
+	"github.com/SlateGitOrg/plait/internal/config"
+	"github.com/SlateGitOrg/plait/internal/engine"
+	"github.com/SlateGitOrg/plait/internal/fakecloud"
+	"github.com/SlateGitOrg/plait/internal/state"
+	"github.com/SlateGitOrg/plait/internal/workspace"
 )
 
 // env is one test workspace: a config directory, a fake cloud and state.

@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/archit2501/plait/internal/fakecloud"
+	"github.com/SlateGitOrg/plait/internal/fakecloud"
 )
 
 const cfg = `

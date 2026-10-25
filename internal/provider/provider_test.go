@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 var (

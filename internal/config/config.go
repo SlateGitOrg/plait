@@ -12,11 +12,11 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/archit2501/plait/internal/addr"
-	"github.com/archit2501/plait/internal/dag"
-	"github.com/archit2501/plait/internal/eval"
-	"github.com/archit2501/plait/internal/syntax"
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/addr"
+	"github.com/SlateGitOrg/plait/internal/dag"
+	"github.com/SlateGitOrg/plait/internal/eval"
+	"github.com/SlateGitOrg/plait/internal/syntax"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 // FileExt is the extension of configuration files.

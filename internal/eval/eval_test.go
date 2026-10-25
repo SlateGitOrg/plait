@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/archit2501/plait/internal/syntax"
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/syntax"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 func testCtx() *Context {

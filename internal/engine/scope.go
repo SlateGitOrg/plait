@@ -6,11 +6,11 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/archit2501/plait/internal/addr"
-	"github.com/archit2501/plait/internal/config"
-	"github.com/archit2501/plait/internal/eval"
-	"github.com/archit2501/plait/internal/syntax"
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/addr"
+	"github.com/SlateGitOrg/plait/internal/config"
+	"github.com/SlateGitOrg/plait/internal/eval"
+	"github.com/SlateGitOrg/plait/internal/syntax"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 // evaluator builds evaluation scopes on demand. Only the locals and

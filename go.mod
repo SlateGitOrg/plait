@@ -1,3 +1,3 @@
-module github.com/archit2501/plait
+module github.com/SlateGitOrg/plait
 
 go 1.24

@@ -3,7 +3,7 @@ package syntax
 import (
 	"strconv"
 
-	"github.com/archit2501/plait/internal/value"
+	"github.com/SlateGitOrg/plait/internal/value"
 )
 
 // ParseFile parses a configuration file.

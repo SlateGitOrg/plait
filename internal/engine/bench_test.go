@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/archit2501/plait/internal/state"
+	"github.com/SlateGitOrg/plait/internal/state"
 )
 
 // benchConfig is a layered configuration: n resources in chains of depth 5,

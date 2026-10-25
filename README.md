@@ -1,11 +1,12 @@
 # plait
 
-A small declarative infrastructure-as-code engine in Go, built to show how
-tools like Terraform work inside: an HCL-subset language, a dependency graph
+A small declarative infrastructure-as-code engine in Go: an HCL-subset language, a dependency graph
 with cycle detection, plans with "known after apply" values, a parallel
 apply that persists state after every step, a JSON state file with a lock,
 and a provider plugin interface with two providers — the local filesystem and
 a fake cloud whose HTTP API ships in this repository.
+
+[![CI](https://github.com/SlateGitOrg/plait/actions/workflows/ci.yml/badge.svg)](https://github.com/SlateGitOrg/plait/actions/workflows/ci.yml)
 
 ```console
 $ plait plan
@@ -18,12 +19,13 @@ $ plait plan
     }
 ```
 
-**Who it is for:** engineers who use Terraform/OpenTofu and want to see the
-plan/apply/state model in about 9,400 lines of readable Go (plus about 3,700
-lines of tests; counted by `make loc`), and anyone who needs
-a compact reference for dependency-ordered, crash-safe reconciliation. It is
-a learning and portfolio project, not a Terraform replacement: it manages
-local files and the in-repo fake cloud only.
+## Why
+
+Terraform and OpenTofu are large, and the plan/apply/state model is hard to
+see inside them. plait implements that model in about 9,400 lines of Go (plus
+about 3,700 lines of tests; counted by `make loc`): dependency-ordered,
+crash-safe reconciliation you can read end to end. It is not a Terraform
+replacement: it manages local files and the in-repo fake cloud only.
 
 What sets it apart from a toy: interrupted applies are recoverable by
 design. Every create is written to state as *pending* with an idempotency
@@ -99,7 +101,7 @@ provider contract, and the complexity of each stage.
 `docs/TERRAFORM_COMPARISON.md` maps every concept to Terraform's and lists
 what is simplified and what is deliberately different.
 
-## Quickstart
+## Quick start
 
 Requires Go 1.24+ (developed with 1.27) and, for `make check`,
 golangci-lint v2.
@@ -366,9 +368,6 @@ The full list with trade-offs is in `DECISIONS.md`. The main ones:
   non-provider cost for very large applies.
 - Plan output is a flat per-attribute diff; nested map/list changes are
   shown as whole values, and long strings are printed escaped on one line.
-- The CI workflow (`.github/workflows/ci.yml`) mirrors `make check` and
-  `make demo` but has not run on GitHub yet: the repository has not been
-  pushed.
 - Benchmarks use an in-memory provider; they measure engine overhead, not
   real-world apply time.
 
@@ -407,4 +406,4 @@ docs/                      architecture and Terraform comparison
 
 ## License
 
-MIT — see `LICENSE`.
+MIT — see [LICENSE](LICENSE).
