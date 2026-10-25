@@ -1,0 +1,12 @@
+output "web_ips" {
+  value       = fakecloud_instance.web[*].private_ip
+  description = "private IPs of the web instances"
+}
+
+output "bucket_arns" {
+  value = { for k, b in fakecloud_bucket.data : k => b.arn }
+}
+
+output "inventory_sha256" {
+  value = local_file.inventory.content_sha256
+}

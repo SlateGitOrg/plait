@@ -1,0 +1,25 @@
+variable "cloud_endpoint" {
+  type        = string
+  default     = "http://127.0.0.1:8787"
+  description = "fake cloud API base URL"
+}
+
+variable "env" {
+  type    = string
+  default = "dev"
+}
+
+variable "web_count" {
+  type    = number
+  default = 2
+}
+
+variable "web_size" {
+  type    = string
+  default = "small"
+}
+
+variable "buckets" {
+  type    = list(string)
+  default = ["logs", "media"]
+}

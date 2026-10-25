@@ -1,0 +1,47 @@
+# A small web stack on the in-repo fake cloud, plus a local inventory file.
+
+provider "fakecloud" {
+  endpoint = var.cloud_endpoint
+}
+
+locals {
+  prefix = "${var.env}-shop"
+  common_tags = {
+    env        = var.env
+    managed_by = "plait"
+  }
+}
+
+resource "fakecloud_network" "main" {
+  name = "${local.prefix}-net"
+  cidr = "10.20.0.0/16"
+}
+
+resource "fakecloud_instance" "web" {
+  count      = var.web_count
+  name       = format("%s-web-%02d", local.prefix, count.index)
+  size       = var.web_size
+  network_id = fakecloud_network.main.id
+  tags       = merge(local.common_tags, { role = "web" })
+}
+
+resource "fakecloud_bucket" "data" {
+  for_each   = toset(var.buckets)
+  name       = "${local.prefix}-${each.key}"
+  versioning = each.key == "media"
+}
+
+resource "local_directory" "out" {
+  path = "out"
+}
+
+resource "local_file" "inventory" {
+  path = "out/inventory.ini"
+  content = join("\n", concat(
+    ["[web]"],
+    [for i in fakecloud_instance.web : "${i.name} ansible_host=${i.private_ip}"],
+    ["", "[buckets]"],
+    [for k, b in fakecloud_bucket.data : "${k} = ${b.arn}"],
+  ))
+  depends_on = [local_directory.out]
+}
