@@ -104,15 +104,15 @@ func (p *Provider) resolve(path string) (string, error) {
 	return full, nil
 }
 
-func parsePerm(s, def string) (fs.FileMode, string, error) {
+func parsePerm(s, def string) (fs.FileMode, error) {
 	if s == "" {
 		s = def
 	}
 	n, err := strconv.ParseUint(s, 8, 32)
 	if err != nil || n > 0o777 {
-		return 0, "", fmt.Errorf("invalid permission %q: want an octal mode such as 0644", s)
+		return 0, fmt.Errorf("invalid permission %q: want an octal mode such as 0644", s)
 	}
-	return fs.FileMode(n), fmt.Sprintf("%04o", n), nil
+	return fs.FileMode(n), nil
 }
 
 func digest(content string) string {
@@ -137,7 +137,7 @@ func (p *Provider) PlanResource(_ context.Context, req provider.PlanRequest) (pr
 		permAttr, def = "file_permission", "0644"
 	}
 	if pv, _ := req.Config.Get(permAttr); pv.Kind() == value.KindString {
-		if _, _, err := parsePerm(pv.AsString(), def); err != nil {
+		if _, err := parsePerm(pv.AsString(), def); err != nil {
 			return provider.PlanResponse{}, err
 		}
 	}
@@ -183,7 +183,7 @@ func (p *Provider) ApplyResource(_ context.Context, req provider.ApplyRequest) (
 	}
 	switch req.Type {
 	case "local_directory":
-		mode, _, err := parsePerm(provider.StringAttr(req.Planned, "permission"), "0755")
+		mode, err := parsePerm(provider.StringAttr(req.Planned, "permission"), "0755")
 		if err != nil {
 			return provider.ApplyResponse{}, err
 		}
@@ -194,7 +194,7 @@ func (p *Provider) ApplyResource(_ context.Context, req provider.ApplyRequest) (
 			return provider.ApplyResponse{}, err
 		}
 	case "local_file":
-		mode, _, err := parsePerm(provider.StringAttr(req.Planned, "file_permission"), "0644")
+		mode, err := parsePerm(provider.StringAttr(req.Planned, "file_permission"), "0644")
 		if err != nil {
 			return provider.ApplyResponse{}, err
 		}

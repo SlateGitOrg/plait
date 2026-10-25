@@ -25,7 +25,7 @@ func (c client) do(method, path, body string, hdr ...string) (int, map[string]an
 	if err != nil {
 		c.t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	data, _ := io.ReadAll(resp.Body)
 	var out map[string]any
 	_ = json.Unmarshal(data, &out)
@@ -125,7 +125,7 @@ func TestIdempotencyFaultsAndAdmin(t *testing.T) {
 	}
 	var list []map[string]any
 	_ = json.NewDecoder(resp.Body).Decode(&list)
-	resp.Body.Close()
+	_ = resp.Body.Close()
 	if len(list) != 1 {
 		t.Fatalf("token lookup %v", list)
 	}
@@ -160,7 +160,7 @@ func TestIdempotencyFaultsAndAdmin(t *testing.T) {
 	}
 	req, _ = http.NewRequest("GET", c.url+"/v1/_events", nil)
 	resp, _ = http.DefaultClient.Do(req)
-	resp.Body.Close()
+	_ = resp.Body.Close()
 	if resp.StatusCode != 401 {
 		t.Fatal("auth required")
 	}

@@ -73,10 +73,10 @@ func Convert(v Value, t Type) (Value, error) {
 		}
 		return Number(n), nil
 	case TypeBool:
-		switch {
-		case v.kind == KindBool:
+		switch v.kind {
+		case KindBool:
 			return v, nil
-		case v.kind == KindString:
+		case KindString:
 			b, err := strconv.ParseBool(v.s)
 			if err != nil || (v.s != "true" && v.s != "false") {
 				return Null, fmt.Errorf("bool required, got %q", v.s)

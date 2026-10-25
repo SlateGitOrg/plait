@@ -369,7 +369,7 @@ func (e *Engine) planInstance(ctx context.Context, ev *evaluator, r *config.Reso
 			return nil, err
 		}
 		ch.Action, ch.After, ch.Reason = replaceAction, resp.Planned, "it is tainted"
-		return ch, e.checkPreventDestroy(r, ch)
+		return ch, checkPreventDestroy(r)
 	}
 	resp, err := p.PlanResource(ctx, provider.PlanRequest{Type: r.Addr.Type, Prior: prior.Attrs, Config: cfg})
 	if err != nil {
@@ -385,7 +385,7 @@ func (e *Engine) planInstance(ctx context.Context, ev *evaluator, r *config.Reso
 		ch.Action, ch.After = replaceAction, fresh.Planned
 		ch.RequiresReplace = append([]string(nil), resp.RequiresReplace...)
 		sort.Strings(ch.RequiresReplace)
-		return ch, e.checkPreventDestroy(r, ch)
+		return ch, checkPreventDestroy(r)
 	}
 	ch.After = resp.Planned
 	if resp.Planned.Equal(prior.Attrs) {
@@ -396,7 +396,7 @@ func (e *Engine) planInstance(ctx context.Context, ev *evaluator, r *config.Reso
 	return ch, nil
 }
 
-func (e *Engine) checkPreventDestroy(r *config.Resource, ch *ResourceChange) error {
+func checkPreventDestroy(r *config.Resource) error {
 	if r.Lifecycle.PreventDestroy {
 		return fmt.Errorf("lifecycle.prevent_destroy is set, but the plan would replace this object")
 	}

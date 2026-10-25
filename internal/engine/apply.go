@@ -59,10 +59,10 @@ func joinNodeErrors(m map[string]error) error {
 type stepKind uint8
 
 const (
-	stepApply          stepKind = iota // create or update the current object
-	stepDestroy                        // delete the current object
-	stepDestroyDeposed                 // delete a deposed object from an earlier run
-	stepDestroyReplaced                // delete the object deposed by create_before_destroy
+	stepApply           stepKind = iota // create or update the current object
+	stepDestroy                         // delete the current object
+	stepDestroyDeposed                  // delete a deposed object from an earlier run
+	stepDestroyReplaced                 // delete the object deposed by create_before_destroy
 )
 
 type step struct {

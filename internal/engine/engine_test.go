@@ -52,7 +52,7 @@ func newMock() *mockProvider {
 		partial: map[string]bool{}, lost: map[string]bool{}}
 }
 
-func (m *mockProvider) Schema() provider.Schema                        { return mockSchema }
+func (m *mockProvider) Schema() provider.Schema                      { return mockSchema }
 func (m *mockProvider) Configure(context.Context, value.Value) error { return nil }
 
 func (m *mockProvider) PlanResource(_ context.Context, req provider.PlanRequest) (provider.PlanResponse, error) {

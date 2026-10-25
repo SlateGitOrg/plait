@@ -45,10 +45,10 @@ func TestJSONRoundTrip(t *testing.T) {
 }
 
 func TestEqualityAndKnownness(t *testing.T) {
-	if Unknown.Equal(Unknown) {
+	if u := Unknown; u.Equal(Unknown) {
 		t.Fatal("unknowns must never be equal")
 	}
-	if !Null.Equal(Null) || Null.Equal(False) {
+	if n := Null; !n.Equal(Null) || Null.Equal(False) {
 		t.Fatal("null equality")
 	}
 	if List(Int(1)).Equal(List(Int(1), Int(2))) {

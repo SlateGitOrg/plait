@@ -150,16 +150,35 @@ type ForExpr struct {
 	Pos     Pos
 }
 
-func (e *LiteralExpr) Start() Pos     { return e.Pos }
-func (e *TemplateExpr) Start() Pos    { return e.Pos }
-func (e *TraversalExpr) Start() Pos   { return e.Pos }
-func (e *FuncCallExpr) Start() Pos    { return e.Pos }
-func (e *BinaryExpr) Start() Pos      { return e.Pos }
-func (e *UnaryExpr) Start() Pos       { return e.Pos }
+// Start returns the position where the expression begins.
+func (e *LiteralExpr) Start() Pos { return e.Pos }
+
+// Start implements Expr.
+func (e *TemplateExpr) Start() Pos { return e.Pos }
+
+// Start implements Expr.
+func (e *TraversalExpr) Start() Pos { return e.Pos }
+
+// Start implements Expr.
+func (e *FuncCallExpr) Start() Pos { return e.Pos }
+
+// Start implements Expr.
+func (e *BinaryExpr) Start() Pos { return e.Pos }
+
+// Start implements Expr.
+func (e *UnaryExpr) Start() Pos { return e.Pos }
+
+// Start implements Expr.
 func (e *ConditionalExpr) Start() Pos { return e.Pos }
-func (e *TupleExpr) Start() Pos       { return e.Pos }
-func (e *ObjectExpr) Start() Pos      { return e.Pos }
-func (e *ForExpr) Start() Pos         { return e.Pos }
+
+// Start implements Expr.
+func (e *TupleExpr) Start() Pos { return e.Pos }
+
+// Start implements Expr.
+func (e *ObjectExpr) Start() Pos { return e.Pos }
+
+// Start implements Expr.
+func (e *ForExpr) Start() Pos { return e.Pos }
 
 func (*LiteralExpr) exprNode()     {}
 func (*TemplateExpr) exprNode()    {}

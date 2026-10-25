@@ -149,7 +149,7 @@ func LoadFiles(dir string, files map[string]string) (*Config, error) {
 	sort.Strings(names)
 	h := sha256.New()
 	for _, n := range names {
-		fmt.Fprintf(h, "%d:%s\x00%d:%s\x00", len(n), n, len(files[n]), files[n])
+		_, _ = fmt.Fprintf(h, "%d:%s\x00%d:%s\x00", len(n), n, len(files[n]), files[n])
 	}
 	cfg.Digest = hex.EncodeToString(h.Sum(nil))
 	var diags Diagnostics
